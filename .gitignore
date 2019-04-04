@@ -18,5 +18,5 @@
 ###< symfony/web-server-bundle ###
 
 ### phpstorm config
-.idea
-.idea/*
+/.idea
+/.idea/*
