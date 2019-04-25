@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello IndexController!{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        #map {
+            height: 80vh;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <h1>Hello {{ controller_name }}! ✅</h1>
+
+        This friendly message is coming from:
+        <ul>
+            <li>Your controller at <code><a
+                            href="{{ 'F:/Xampp-7.3.0/htdocs/symfony/kivaou/src/Controller/IndexController.php'|file_link(0) }}">src/Controller/IndexController.php</a></code>
+            </li>
+            <li>Your template at <code><a
+                            href="{{ 'F:/Xampp-7.3.0/htdocs/symfony/kivaou/templates/index/index.html.twig'|file_link(0) }}">templates/index/index.html.twig</a></code>
+            </li>
+        </ul>
+        <p>Test</p>
+        <div id="map"></div>
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var map = L.map('map').setView([43.440955, 2.830353], 8);
+        var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        // function onMapClick(e) {
+        //     alert("You clicked the map at " + e.latlng);
+        // }
+        //
+        // map.on('click', onMapClick);
+
+    </script>
+{% endblock %}
