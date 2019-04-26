@@ -13,18 +13,11 @@
 {% block body %}
 
     <div class="container">
-        <h1>Hello {{ controller_name }}! ✅</h1>
 
-        This friendly message is coming from:
-        <ul>
-            <li>Your controller at <code><a
-                            href="{{ 'F:/Xampp-7.3.0/htdocs/symfony/kivaou/src/Controller/IndexController.php'|file_link(0) }}">src/Controller/IndexController.php</a></code>
-            </li>
-            <li>Your template at <code><a
-                            href="{{ 'F:/Xampp-7.3.0/htdocs/symfony/kivaou/templates/index/index.html.twig'|file_link(0) }}">templates/index/index.html.twig</a></code>
-            </li>
+        <H1>Test Carto</H1>
+        <ul id="js-journey-listing">
+
         </ul>
-        <p>Test</p>
         <div id="map"></div>
 
     </div>
@@ -32,22 +25,16 @@
 
 {% block javascripts %}
     <script>
-        var map = L.map('map').setView([43.440955, 2.830353], 8);
-        var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        const journeyListing = document.querySelector('#js-journey-listing');
+        let map = L.map('map').setView([43.440955, 2.830353], 8);
+        let CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
             subdomains: 'abcd',
             maxZoom: 19
         }).addTo(map);
 
-        // function onMapClick(e) {
-        //     alert("You clicked the map at " + e.latlng);
-        // }
-        //
-        // map.on('click', onMapClick);
-
-
         //Shamelessly ripped from aidersante site
-        var locations = [
+        let locations = [
             ['UAD AIDER SANTÉ Font-Romeu', '12, rue de la Liberté<br />66 120 Font-Romeu<br />Secrétariat Médical : 04 30 82 16 24<br /><a href="/sites/uad-font-romeu/">En savoir plus</a>', 'UAD', 42.49747259999999,2.035312500000032,1 ],
 
             ['UAD AIDER SANTÉ Narbonne', 'Les conviviales,<br />10 quai d’Alsace<br />11 100 Narbonne<br />Secrétariat Médical – Polyclinique Le Languedoc (Narbonne), service néphrologie : 04 68 32 82 35<br /><a href="/sites/unite-de-dialyse-de-narbonne/">En savoir plus</a>', 'UAD',43.18808269999999, 2.9970233000000235, 2 ],
@@ -91,16 +78,78 @@
             ['AIDER SANTÉ Alès', '414, chemin des Potences<br />30 100 Alès<br />Secrétariat Médical : 04 30 63 13 20<br /><a href="/sites/centre-de-dialyse-de-lhopital-dales/">En savoir plus</a>', 'ENT',44.1484075, 4.094668500000012,39 ],
         ];
 
-        let marker=[];
+        let markers=[];
         for(let i=0; i<locations.length; i++){
-            marker[i] = L.marker([locations[i][3],locations[i][4]]).addTo(map);
-            let toolTip = '<p>'+locations[i][0]+'</p><button class="btn btn-primary" onclick="addToJurney(this)" data-info="'+locations[i][0]+'">ajouter au trajet</button>';
-            marker[i].bindPopup(toolTip);
+            //adding marker to map
+            markers[i] = L.marker([locations[i][3],locations[i][4]]).addTo(map);
+            //setting the popup
+            markers[i].bindPopup();
+            //calling the funciton to update the popup
+            markers[i].addEventListener('click', e=>markerClick(e, markers[i], locations[i]))
         }
 
-        function addToJurney(self){
-            let info = self.dataset.info;
-            console.log('added '+info);
+        function markerClick(e, marker, info){
+            let p = marker.getPopup();
+            // const journeyListing = document.querySelector('#js-journey-listing');
+            let popupContent = '<p class="popup-header">'+info[0]+'</p>';
+
+            if(journeyListing.children.length >0){
+                popupContent += '<button class="btn btn-primary mt-1 js-add-to-journey js-end-journey">Arrivé</button>';
+                popupContent += '<button class="btn btn-primary mt-1 js-add-to-journey">Etape</button>';
+                popupContent += '<button class="btn btn-primary mt-1 js-delete-journey">Effacer trajet</button>';
+
+            }else{
+                popupContent += '<button class="btn btn-primary mt-1 js-add-to-journey">Depart de mon trajet</button>';
+                popupContent += '<a class="btn btn-primary mt-1" href="#" style="color: #fff;">Liste des trajets</a>';
+            }
+
+            p.setContent(popupContent);
+
+            const addToJourneyButtons = document.querySelectorAll('.js-add-to-journey');
+            if(addToJourneyButtons){
+                for (const addToJourneyButton of addToJourneyButtons){
+                    addToJourneyButton.addEventListener('click', e=>addToJourney(e,info));
+                    addToJourneyButton.addEventListener('click', e=>closePopup(e,marker));
+                }
+            }
+
+
+            const deleteJourneyButton = document.querySelector('.js-delete-journey');
+            if(deleteJourneyButton){
+                deleteJourneyButton.addEventListener('click', e=>deleteJourney(e));
+                deleteJourneyButton.addEventListener('click', e=>closePopup(e, marker));
+            }
+
+            const endJourneyButton = document.querySelector('.js-end-journey');
+            if(endJourneyButton){
+                endJourneyButton.addEventListener('click', e=>endJourney(e));
+                endJourneyButton.addEventListener('click', e=>closePopup(e, marker));
+            }
+
+        }
+
+        function addToJourney(e,info){
+            let listElement = '<li>'+info[0]+'</li>';
+            journeyListing.insertAdjacentHTML('beforeend', listElement);
+            // console.log('added '+info);
+        }
+
+        function deleteJourney(e){
+            while (journeyListing.firstChild) {
+                journeyListing.removeChild(journeyListing.firstChild);
+            }
+        }
+
+        function closePopup(e, marker){
+            marker.closePopup();
+        }
+
+        function endJourney(e){
+            for(const marker of markers){
+                // marker.removeEventListener('click', markerClick());
+                marker.off('click');
+            }
+
         }
 
     </script>
