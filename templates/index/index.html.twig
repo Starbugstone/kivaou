@@ -94,8 +94,13 @@
         let marker=[];
         for(let i=0; i<locations.length; i++){
             marker[i] = L.marker([locations[i][3],locations[i][4]]).addTo(map);
-            marker[i].bindPopup(locations[i][0]);
-            // marker[i].on('click', console.log(locations[i][2]));
+            let toolTip = '<p>'+locations[i][0]+'</p><button class="btn btn-primary" onclick="addToJurney(this)" data-info="'+locations[i][0]+'">ajouter au trajet</button>';
+            marker[i].bindPopup(toolTip);
+        }
+
+        function addToJurney(self){
+            let info = self.dataset.info;
+            console.log('added '+info);
         }
 
     </script>
