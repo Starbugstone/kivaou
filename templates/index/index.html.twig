@@ -12,8 +12,10 @@
 
 {% block body %}
 
-    <div class="container">
-
+    <div class="container-fluid">
+        {# TODO: Reorganise the layout #}
+        {# TODO: Fix map on right and form on left #}
+        {# TODO: Add the unit listing under the form #}
         <H1>Test Carto</H1>
 
         {{ form_start(form, { 'attr': {'class': 'js-journey-form' }}) }}
@@ -132,11 +134,6 @@
             newElem.find('.js-site-id-placeholder').val(info.id);
 
             newElem.appendTo(list);
-
-
-            // let listElement = '<li>' + info.id + ' - ' + info.name + '</li>';
-            // journeyListing.insertAdjacentHTML('beforeend', listElement);
-            // console.log('added '+info);
         }
 
         function deleteJourney(e) {
@@ -166,6 +163,9 @@
                 e.preventDefault();
                 return false;
             }
+
+            {#TODO: check if start == end#}
+
 
 
         })

@@ -56,8 +56,10 @@ class JourneyRepository extends ServiceEntityRepository
             ->andWhere('j.Date >= :now')
             ->setParameter('site', $site)
             ->setParameter('now', $startDate)
+            ->orderBy('j.Date', 'Desc')
             ->getQuery()
             ->getResult()
             ;
+        //TODO: Pagination ?
     }
 }
