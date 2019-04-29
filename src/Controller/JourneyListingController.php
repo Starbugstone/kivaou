@@ -30,17 +30,9 @@ class JourneyListingController extends AbstractController
      */
     public function index(Site $site)
     {
-//        dd($site);
-//        $journeyHasSite = $this->journeyHasSiteRepository->findBy(['Site' => $site]); //TODO: filter by date
-//        $journeys = [];
-//        foreach($journeyHasSite as $hasSite){
-//            $journeys[] = $hasSite->getJourney();
-//        }
         $journeys = $this->journeyRepository->findJourneysBySite($site, new \DateTime('01/04/2019'));
 
         $journeys = array_unique($journeys, SORT_REGULAR);
-
-        dump($journeys);
 
         return $this->render('journey_listing/index.html.twig', [
             'controller_name' => 'JourneyListingController',

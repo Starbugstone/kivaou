@@ -134,6 +134,8 @@
             newElem.find('.js-site-id-placeholder').val(info.id);
 
             newElem.appendTo(list);
+
+            {# TODO: Add the delete button #}
         }
 
         function deleteJourney(e) {
@@ -154,6 +156,8 @@
             //Making the submit button visible
             document.querySelector('.js-submit-button').classList.remove('d-none');
             blockSubmit = false;
+
+            {# TODO: remove the delete buttons #}
 
         }
 

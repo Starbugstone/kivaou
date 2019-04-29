@@ -26,6 +26,7 @@ class JourneyType extends AbstractType
             ->add('JourneyHasSites', CollectionType::class, [
                 'entry_type' => JourneyHasSiteType::class,
                 'allow_add' => true,
+                'allow_delete' => true,
                 'by_reference' => false,
                 'label' => false,
             ])
