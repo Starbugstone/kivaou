@@ -47,4 +47,17 @@ class JourneyRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findJourneysBySite($site, $startDate)
+    {
+        return $this->createQueryBuilder('j')
+            ->leftJoin('j.journeyHasSites', 's')
+            ->andWhere('s.Site = :site')
+            ->andWhere('j.Date >= :now')
+            ->setParameter('site', $site)
+            ->setParameter('now', $startDate)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello JourneyListingController!{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .start {
+            /*background-color: blue;*/
+        }
+
+        .end {
+            /*background-color: yellow;*/
+        }
+
+        .highlight{
+            color: blue;
+            font-weight: bold;
+            /*background-color: black;*/
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h1>{{ site.name }}</h1>
+    {% for journey in journeys %}
+        <h2>{{ journey.name }}</h2>
+        <h2>{{ journey.date|date("d/m/Y H:i") }}</h2>
+        <ul class="fa-ul">
+            {% for siteList in journey.journeyHasSites %}
+                <li class="
+                    {{ siteList.start ? ' start' }}
+                    {{ siteList.end ? ' end' }}
+                    {{ siteList.site.id == site.id ? ' highlight' }}
+                ">
+                    {{ siteList.start ? '<i class="fa-li fa fa-arrow-right"></i>' }}
+                    {{ siteList.end ? '<i class="fa-li fa fa-arrow-left"></i>' }}
+                    {{ not siteList.start and not siteList.end ? '<i class="fa-li fa fa-arrows-h"></i>' }}
+                    {{ siteList.site.name }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+{% endblock %}

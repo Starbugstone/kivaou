@@ -17,7 +17,7 @@ class JourneyHasSite
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Journey", inversedBy="journeyHasSites")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Journey", inversedBy="journeyHasSites", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
      */
     private $Journey;
