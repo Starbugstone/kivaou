@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -30,6 +32,16 @@ class Site
      * @ORM\Column(type="float")
      */
     private $lon;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\JourneyHasSite", mappedBy="Site")
+     */
+//    private $journeyHasSites;
+//
+//    public function __construct()
+//    {
+//        $this->journeyHasSites = new ArrayCollection();
+//    }
 
     public function getId(): ?int
     {
@@ -70,5 +82,41 @@ class Site
         $this->lon = $lon;
 
         return $this;
+    }
+
+//    /**
+//     * @return Collection|JourneyHasSite[]
+//     */
+//    public function getJourneyHasSites(): Collection
+//    {
+//        return $this->journeyHasSites;
+//    }
+
+//    public function addJourneyHasSite(JourneyHasSite $journeyHasSite): self
+//    {
+//        if (!$this->journeyHasSites->contains($journeyHasSite)) {
+//            $this->journeyHasSites[] = $journeyHasSite;
+//            $journeyHasSite->setSite($this);
+//        }
+//
+//        return $this;
+//    }
+//
+//    public function removeJourneyHasSite(JourneyHasSite $journeyHasSite): self
+//    {
+//        if ($this->journeyHasSites->contains($journeyHasSite)) {
+//            $this->journeyHasSites->removeElement($journeyHasSite);
+//            // set the owning side to null (unless already changed)
+//            if ($journeyHasSite->getSite() === $this) {
+//                $journeyHasSite->setSite(null);
+//            }
+//        }
+//
+//        return $this;
+//    }
+
+    public function __toString():?string
+    {
+        return $this->id;
     }
 }

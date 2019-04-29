@@ -15,19 +15,38 @@
     <div class="container">
 
         <H1>Test Carto</H1>
-        <ul id="js-journey-listing">
+
+        {{ form_start(form, { 'attr': {'class': 'js-journey-form' }}) }}
+        <ul id="js-journey-listing"
+            data-prototype="{{ form_widget(form.JourneyHasSites.vars.prototype)|e }}"
+            data-widget-tags="{{ '<li></li>'|e }}"
+            data-widget-counter="{{ form.children|length }}">
+            {% for JourneyHasSite in form.JourneyHasSites %}
+                <li>
+                    {{ form_errors(JourneyHasSite) }}
+                    {{ form_widget(JourneyHasSite) }}
+                </li>
+            {% endfor %}
 
         </ul>
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+
+
         <div id="map"></div>
 
     </div>
+
     <span id="js-data-elements" data-sites="{{ sites }}"></span>
+
 {% endblock %}
 
 {% block javascripts %}
     <script>
         const journeyListing = document.querySelector('#js-journey-listing');
         const dataElements = document.querySelector('#js-data-elements')
+        let blockSubmit = true;
+
         let map = L.map('map').setView([43.440955, 2.830353], 8);
         let CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -38,79 +57,117 @@
         //Shamelessly ripped from aidersante site
         let locations = JSON.parse(dataElements.dataset.sites);
         console.log(locations)
-        let markers=[];
-        for(let i=0; i<locations.length; i++){
+        let markers = [];
+        for (let i = 0; i < locations.length; i++) {
             //adding marker to map
-            markers[i] = L.marker([locations[i].lat,locations[i].lon]).addTo(map);
+            markers[i] = L.marker([locations[i].lat, locations[i].lon], {title: locations[i].name}).addTo(map);
             //setting the popup
             markers[i].bindPopup();
             //calling the funciton to update the popup
-            markers[i].addEventListener('click', e=>markerClick(e, markers[i], locations[i]))
+            markers[i].addEventListener('click', e => markerClick(e, markers[i], locations[i]))
         }
 
-        function markerClick(e, marker, info){
+        function markerClick(e, marker, info) {
             let p = marker.getPopup();
             // const journeyListing = document.querySelector('#js-journey-listing');
-            let popupContent = '<p class="popup-header">'+info.name+'</p>';
+            let popupContent = '<p class="popup-header">' + info.name + '</p>';
 
-            if(journeyListing.children.length >0){
-                popupContent += '<p><button class="btn btn-primary js-add-to-journey js-end-journey">Arrivé</button></p>';
-                popupContent += '<p><button class="btn btn-primary js-add-to-journey">Etape</button></p>';
-                popupContent += '<p><button class="btn btn-primary js-delete-journey">Effacer trajet</button></p>';
+            if (journeyListing.children.length > 0) {
+                popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey js-end-journey">Arrivé</button></p>';
+                popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey">Etape</button></p>';
+                popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-danger w-100 js-delete-journey">Effacer trajet</button></p>';
 
-            }else{
-                popupContent += '<p><button class="btn btn-primary js-add-to-journey">Depart de mon trajet</button></p>';
-                popupContent += '<p><a class="btn btn-primary" href="#" style="color: #fff;">Liste des trajets</a></p>';
+            } else {
+                popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey">Depart de mon trajet</button></p>';
+                popupContent += '<p class="m-0 mt-1 w-100"><a class="btn btn-primary w-100" href="#" style="color: #fff;">Liste des trajets</a></p>';
             }
 
             p.setContent(popupContent);
 
             const addToJourneyButtons = document.querySelectorAll('.js-add-to-journey');
-            if(addToJourneyButtons){
-                for (const addToJourneyButton of addToJourneyButtons){
-                    addToJourneyButton.addEventListener('click', e=>addToJourney(e,info));
-                    addToJourneyButton.addEventListener('click', e=>closePopup(e,marker));
+            if (addToJourneyButtons) {
+                for (const addToJourneyButton of addToJourneyButtons) {
+                    addToJourneyButton.addEventListener('click', e => addToJourney(e, info));
+                    addToJourneyButton.addEventListener('click', e => closePopup(e, marker));
                 }
             }
 
 
             const deleteJourneyButton = document.querySelector('.js-delete-journey');
-            if(deleteJourneyButton){
-                deleteJourneyButton.addEventListener('click', e=>deleteJourney(e));
-                deleteJourneyButton.addEventListener('click', e=>closePopup(e, marker));
+            if (deleteJourneyButton) {
+                deleteJourneyButton.addEventListener('click', e => deleteJourney(e));
+                deleteJourneyButton.addEventListener('click', e => closePopup(e, marker));
             }
 
             const endJourneyButton = document.querySelector('.js-end-journey');
-            if(endJourneyButton){
-                endJourneyButton.addEventListener('click', e=>endJourney(e));
-                endJourneyButton.addEventListener('click', e=>closePopup(e, marker));
+            if (endJourneyButton) {
+                endJourneyButton.addEventListener('click', e => endJourney(e));
+                endJourneyButton.addEventListener('click', e => closePopup(e, marker));
             }
 
         }
 
-        function addToJourney(e,info){
-            let listElement = '<li>'+info.name+'</li>';
-            journeyListing.insertAdjacentHTML('beforeend', listElement);
+        function addToJourney(e, info) {
+
+            var list = jQuery('#js-journey-listing');
+            // Try to find the counter of the list or use the length of the list
+            var counter = list.data('widget-counter') | list.children().length;
+            //grab the prototype template
+            var newWidget = list.attr('data-prototype');
+            // replace the "__name__" used in the id and name of the prototype
+            // with a number that's unique to your emails
+            // end name attribute looks like name="contact[emails][2]"
+            newWidget = newWidget.replace(/__name__/g, counter);
+            // Increase the counter
+            counter++;
+            // And store it, the length cannot be used if deleting widgets is allowed
+            list.data('widget-counter', counter);
+
+
+            // create a new list element and add it to the list
+            var newElem = jQuery(list.attr('data-widget-tags')).html(newWidget);
+
+            //setting the placeholder values to the site name + id
+            newElem.find('.js-site-name-placeholder').val(info.name);
+            newElem.find('.js-site-id-placeholder').val(info.id);
+
+            newElem.appendTo(list);
+
+
+            // let listElement = '<li>' + info.id + ' - ' + info.name + '</li>';
+            // journeyListing.insertAdjacentHTML('beforeend', listElement);
             // console.log('added '+info);
         }
 
-        function deleteJourney(e){
+        function deleteJourney(e) {
             while (journeyListing.firstChild) {
                 journeyListing.removeChild(journeyListing.firstChild);
             }
         }
 
-        function closePopup(e, marker){
+        function closePopup(e, marker) {
             marker.closePopup();
         }
 
-        function endJourney(e){
-            for(const marker of markers){
+        function endJourney(e) {
+            for (const marker of markers) {
                 // marker.removeEventListener('click', markerClick());
                 marker.off('click');
             }
+            //Making the submit button visible
+            document.querySelector('.js-submit-button').classList.remove('d-none');
+            blockSubmit = false;
 
         }
 
+        jQuery('.js-journey-form').submit(function (e) {
+            if(blockSubmit){
+                console.log('blocked form submission');
+                e.preventDefault();
+                return false;
+            }
+
+
+        })
     </script>
 {% endblock %}
