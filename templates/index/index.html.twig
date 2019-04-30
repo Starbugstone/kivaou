@@ -19,7 +19,7 @@
         <H1>Test Carto</H1>
 
         {{ form_start(form, { 'attr': {'class': 'js-journey-form' }}) }}
-        <ul id="js-journey-listing"
+        <ul id="js-journey-listing" class="journey-listing"
             data-prototype="{{ form_widget(form.JourneyHasSites.vars.prototype)|e }}"
             data-widget-tags="{{ '<li></li>'|e }}"
             data-widget-counter="{{ form.children|length }}">
@@ -45,10 +45,11 @@
 
 {% block javascripts %}
     <script>
-        const journeyListing = document.querySelector('#js-journey-listing');
-        const dataElements = document.querySelector('#js-data-elements')
-        let blockSubmit = true;
+        const journeyListing = document.querySelector('#js-journey-listing'); //the list of the diffrent sites
+        const dataElements = document.querySelector('#js-data-elements') //the json storage of the locations
+        let blockSubmit = true; //are we blocking the form submit ?
 
+        //Construct the map
         let map = L.map('map').setView([43.440955, 2.830353], 8);
         let CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -56,9 +57,9 @@
             maxZoom: 19
         }).addTo(map);
 
-        //Shamelessly ripped from aidersante site
+        //getting the location data passed from the database in json form
         let locations = JSON.parse(dataElements.dataset.sites);
-        console.log(locations)
+
         let markers = [];
         for (let i = 0; i < locations.length; i++) {
             //adding marker to map
@@ -69,23 +70,23 @@
             markers[i].addEventListener('click', e => markerClick(e, markers[i], locations[i]))
         }
 
+        //The marker popup on click
         function markerClick(e, marker, info) {
             let p = marker.getPopup();
-            // const journeyListing = document.querySelector('#js-journey-listing');
             let popupContent = '<p class="popup-header">' + info.name + '</p>';
 
-            if (journeyListing.children.length > 0) {
+            if (journeyListing.children.length > 0) { //if we haven't started typing a journey
                 popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey js-end-journey">Arrivé</button></p>';
                 popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey">Etape</button></p>';
                 popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-danger w-100 js-delete-journey">Effacer trajet</button></p>';
-
             } else {
                 popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey">Depart de mon trajet</button></p>';
-                popupContent += '<p class="m-0 mt-1 w-100"><a class="btn btn-primary w-100" href="/journey/site/'+info.id+'" style="color: #fff;">Liste des trajets</a></p>'; {# TODO: remove hard coded link #}
+                popupContent += '<p class="m-0 mt-1 w-100"><a class="btn btn-primary w-100" href="/journey/site/' + info.id + '" style="color: #fff;">Liste des trajets</a></p>'; {# TODO: remove hard coded link #}
             }
-
+            //filling the popup with our buttons
             p.setContent(popupContent);
 
+            //adding the button functionality
             const addToJourneyButtons = document.querySelectorAll('.js-add-to-journey');
             if (addToJourneyButtons) {
                 for (const addToJourneyButton of addToJourneyButtons) {
@@ -93,7 +94,6 @@
                     addToJourneyButton.addEventListener('click', e => closePopup(e, marker));
                 }
             }
-
 
             const deleteJourneyButton = document.querySelector('.js-delete-journey');
             if (deleteJourneyButton) {
@@ -106,16 +106,15 @@
                 endJourneyButton.addEventListener('click', e => endJourney(e));
                 endJourneyButton.addEventListener('click', e => closePopup(e, marker));
             }
-
         }
 
         function addToJourney(e, info) {
 
-            var list = jQuery('#js-journey-listing');
+            let list = jQuery('#js-journey-listing');
             // Try to find the counter of the list or use the length of the list
-            var counter = list.data('widget-counter') | list.children().length;
+            let counter = list.data('widget-counter') | list.children().length;
             //grab the prototype template
-            var newWidget = list.attr('data-prototype');
+            let newWidget = list.attr('data-prototype');
             // replace the "__name__" used in the id and name of the prototype
             // with a number that's unique to your emails
             // end name attribute looks like name="contact[emails][2]"
@@ -127,15 +126,17 @@
 
 
             // create a new list element and add it to the list
-            var newElem = jQuery(list.attr('data-widget-tags')).html(newWidget);
+            let newElem = jQuery(list.attr('data-widget-tags')).html(newWidget);
 
             //setting the placeholder values to the site name + id
             newElem.find('.js-site-name-placeholder').val(info.name);
             newElem.find('.js-site-id-placeholder').val(info.id);
 
-            newElem.appendTo(list);
+            //adding the delete button
+            newElem.append(createDeleteButton());
 
-            {# TODO: Add the delete button #}
+            //adding the row to the dom
+            newElem.appendTo(list);
         }
 
         function deleteJourney(e) {
@@ -149,29 +150,65 @@
         }
 
         function endJourney(e) {
+            const start = journeyListing.firstElementChild;
+            const end = journeyListing.lastElementChild;
+            let startId = start.querySelector('.js-site-id-placeholder').value;
+            let endId = end.querySelector('.js-site-id-placeholder').value;
+            let info=[];
+            info.id = startId;
+            info.name = start.querySelector('.js-site-name-placeholder').value;
+
+            if(startId !== endId){
+                //we do not end at our start location
+                let roundJourney = confirm('Le depart et arrivé sont differents, voulez vous arrivé à '+info.name);
+                if(roundJourney){
+                    console.log('here', start);
+                    addToJourney(e, info);
+                }
+            }
+
+            //removing the onclick functionality of the markers
             for (const marker of markers) {
-                // marker.removeEventListener('click', markerClick());
                 marker.off('click');
             }
+            //deleting the 'delete row' buttons
+            jQuery('.delete-form-row').each(function(){
+                jQuery(this).remove();
+            });
+
             //Making the submit button visible
             document.querySelector('.js-submit-button').classList.remove('d-none');
+
+            //authorising the submit
             blockSubmit = false;
-
-            {# TODO: remove the delete buttons #}
-
         }
 
+        // Creating the delete button, set the askConfirm to true for a delete confirmation
+        function createDeleteButton() {
+            const deleteButton = document.createElement('button');
+            deleteButton.setAttribute('class', 'btn btn-danger delete-form-row');
+
+            deleteButton.insertAdjacentHTML('beforeend', '<i class="fa fa-trash" aria-hidden="true"></i>');
+
+            deleteButton.addEventListener('click', function () {
+                deleteFormRow(this);
+            });
+
+            return deleteButton;
+        }
+
+        //delete the row
+        function deleteFormRow(self) {
+            self.parentNode.parentNode.removeChild(self.parentNode);
+        }
+
+        //blocking the form submit until the journey is finished
         jQuery('.js-journey-form').submit(function (e) {
-            if(blockSubmit){
+            if (blockSubmit) {
                 console.log('blocked form submission');
                 e.preventDefault();
                 return false;
             }
-
-            {#TODO: check if start == end#}
-
-
-
         })
     </script>
 {% endblock %}

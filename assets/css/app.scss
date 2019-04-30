@@ -1,3 +1,17 @@
 body {
     background-color: lightgray;
 }
+
+
+
+.journey-listing li{
+
+    position: relative;
+
+    .delete-form-row{
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}
+
