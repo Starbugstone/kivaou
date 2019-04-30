@@ -15,40 +15,50 @@
 
         <div class="row">
 
-            <div class="col-md-4 text-center">
-                <H1>Ki Va Ou ?</H1>
-                {{ form_start(form, { 'attr': {'class': 'js-journey-form' }}) }}
-                {{ form_row(form.Name) }}
-                {{ form_row(form.Date) }}
-                <ul id="js-journey-listing" class="journey-listing"
-                    data-prototype="{{ form_widget(form.JourneyHasSites.vars.prototype)|e }}"
-                    data-widget-tags="{{ '<li></li>'|e }}"
-                    data-widget-counter="{{ form.children|length }}">
-                    {% for JourneyHasSite in form.JourneyHasSites %}
-                        <li>
-                            {{ form_errors(JourneyHasSite) }}
-                            {{ form_widget(JourneyHasSite) }}
-                        </li>
-                    {% endfor %}
+            <div class="col-md-4">
+                <H1 class="text-center">Ki Va Ou ?</H1>
+                <div class="text-center journey-form-block">
+                    {{ form_start(form, { 'attr': {'class': 'js-journey-form' }}) }}
+                    {{ form_row(form.Name) }}
+                    {{ form_row(form.Date) }}
+                    <ul id="js-journey-listing" class="journey-listing"
+                        data-prototype="{{ form_widget(form.JourneyHasSites.vars.prototype)|e }}"
+                        data-widget-tags="{{ '<li></li>'|e }}"
+                        data-widget-counter="{{ form.children|length }}">
+                        {% for JourneyHasSite in form.JourneyHasSites %}
+                            <li>
+                                {{ form_errors(JourneyHasSite) }}
+                                {{ form_widget(JourneyHasSite) }}
+                            </li>
+                        {% endfor %}
 
-                </ul>
-                {{ form_widget(form) }}
-                {{ form_end(form) }}
+                    </ul>
+                    {{ form_widget(form) }}
+                    {{ form_end(form) }}
+                </div>
+
+                <div class="js-list-sites">
+                    {% for site in sites %}
+                        <div class="row">
+                            <div class="col-6">
+                                <p>{{ site.name }}</p>
+                            </div>
+                            <div class="col-6 js-list-site" id="js-list-site-{{ site.id }}" data-site-id="{{ site.id }}">
+                                {#Add a button that will open the popup#}
+                                <button>???</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
             </div>
             <div class="col-md-8 map-container">
                 <div id="map"></div>
             </div>
         </div>
-
-
-
-
-
-
-
     </div>
 
-    <span id="js-data-elements" data-sites="{{ sites }}"></span>
+    <span id="js-data-elements" data-sites="{{ sites_json }}"></span>
 
 {% endblock %}
 
@@ -70,13 +80,18 @@
         let locations = JSON.parse(dataElements.dataset.sites);
 
         let markers = [];
+        let listSites = [];
+
         for (let i = 0; i < locations.length; i++) {
+            let location = locations[i];
             //adding marker to map
-            markers[i] = L.marker([locations[i].lat, locations[i].lon], {title: locations[i].name}).addTo(map);
+            markers[location.id] = L.marker([location.lat, location.lon], {title: location.name}).addTo(map);
             //setting the popup
-            markers[i].bindPopup();
+            markers[location.id].bindPopup();
             //calling the funciton to update the popup
-            markers[i].addEventListener('click', e => markerClick(e, markers[i], locations[i]))
+            markers[location.id].addEventListener('click', e => markerClick(e, markers[location.id], location))
+
+
         }
 
         //The marker popup on click
@@ -178,7 +193,10 @@
 
             //removing the onclick functionality of the markers
             for (const marker of markers) {
-                marker.off('click');
+                if(marker){
+                    marker.off('click');
+                }
+
             }
             //deleting the 'delete row' buttons
             jQuery('.delete-form-row').each(function(){

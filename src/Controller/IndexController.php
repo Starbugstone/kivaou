@@ -37,7 +37,8 @@ class IndexController extends AbstractController
         $normalizers = [new ObjectNormalizer()];
 
         $serializer = new Serializer($normalizers, $encoders);
-        $sites = $serializer->serialize($this->siteRepository->findAll(), 'json');
+        $sites = $this->siteRepository->findAll();
+        $sitesJson = $serializer->serialize($sites, 'json');
 
         $visitorName = $request->cookies->get('visitorName');
 
@@ -84,6 +85,7 @@ class IndexController extends AbstractController
             'form' => $form->createView(),
             'controller_name' => 'IndexController',
             'sites' => $sites,
+            'sites_json' => $sitesJson,
         ]);
     }
 }
