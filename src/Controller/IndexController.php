@@ -11,7 +11,9 @@ use App\Form\JourneyType;
 use App\Repository\SiteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
@@ -40,10 +42,15 @@ class IndexController extends AbstractController
 
         $serializer = new Serializer($normalizers, $encoders);
         $sites = $serializer->serialize($this->siteRepository->findAll(), 'json');
-//        $sites = $serializer->serialize(array(), 'json');
+
+        $visitorName = $request->cookies->get('visitorName');
 
         $journey = new Journey();
         $journey->setDate(new \DateTimeImmutable());
+
+        if($visitorName){
+            $journey->setName($visitorName);
+        }
 
         $form = $this->createForm(JourneyType::class, $journey);
 
@@ -54,6 +61,7 @@ class IndexController extends AbstractController
 
             $journeyHasSites = $data->getJourneyHasSites();
 
+            //setting the start and finish
             $i=0;
             foreach($journeyHasSites as $journeyHasSite){
                 if ($i===0){
@@ -69,7 +77,10 @@ class IndexController extends AbstractController
 
             $this->addFlash(FlashMessageCategory::SUCCESS, 'Trajet Ajouté avec succes');
 
-            return $this->redirectToRoute('index');
+            $response = $this->redirectToRoute('index');
+            $response->headers->setCookie(new Cookie('visitorName', $data->getName()));
+
+            return $response;
         }
 
 
