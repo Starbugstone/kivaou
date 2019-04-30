@@ -32,8 +32,9 @@ class JourneyType extends AbstractType
             ])
             ->add('Save', SubmitType::class, [
                 'attr' => [
-                    'class' => 'd-none js-submit-button btn btn-primary',
-                ]
+                    'class' => 'd-none js-submit-button btn btn-primary w-100',
+                ],
+                'label' => 'Sauvegarder votre deplacement',
             ])
         ;
     }
