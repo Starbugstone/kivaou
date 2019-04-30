@@ -80,8 +80,6 @@
         let locations = JSON.parse(dataElements.dataset.sites);
 
         let markers = [];
-        let listSites = [];
-
         for (let i = 0; i < locations.length; i++) {
             let location = locations[i];
             //adding marker to map
@@ -90,8 +88,7 @@
             markers[location.id].bindPopup();
             //calling the funciton to update the popup
             markers[location.id].addEventListener('click', e => markerClick(e, markers[location.id], location))
-
-
+            //search for the find button in list and add the marker click listener to it
         }
 
         //The marker popup on click
