@@ -3,17 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Journey;
-use App\Entity\JourneyHasSite;
-use App\FlashMessage\AddFlashTrait;
 use App\FlashMessage\FlashMessageCategory;
-use App\Form\JourneyHasSiteType;
 use App\Form\JourneyType;
 use App\Repository\SiteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;

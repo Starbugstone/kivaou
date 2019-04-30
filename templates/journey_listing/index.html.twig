@@ -12,7 +12,7 @@
             /*background-color: yellow;*/
         }
 
-        .highlight{
+        .highlight {
             color: blue;
             font-weight: bold;
             /*background-color: black;*/
@@ -22,23 +22,55 @@
 
 {% block body %}
     {# TODO: Transform into cards for better readability #}
-    <h1>{{ site.name }}</h1>
-    {% for journey in journeys %}
-        <h2>{{ journey.name }}</h2>
-        <h2>{{ journey.date|date("d/m/Y H:i") }}</h2>
-        <ul class="fa-ul">
-            {% for siteList in journey.journeyHasSites %}
-                <li class="
-                    {{ siteList.start ? ' start' }}
-                    {{ siteList.end ? ' end' }}
-                    {{ siteList.site.id == site.id ? ' highlight' }}
-                ">
-                    {{ siteList.start ? '<i class="fa-li fa fa-arrow-right"></i>' }}
-                    {{ siteList.end ? '<i class="fa-li fa fa-arrow-left"></i>' }}
-                    {{ not siteList.start and not siteList.end ? '<i class="fa-li fa fa-arrows-h"></i>' }}
-                    {{ siteList.site.name }}
-                </li>
+    <div class="container-fluid">
+        <h1>{{ site.name }}</h1>
+        <a class="btn btn-primary mb-1" href="{{ path('index') }}">Retour à la carte</a>
+        <div class="row">
+
+            {% for journey in journeys %}
+                <div class="col-xl-3 col-lg-4 col-sm-6 col-12 mt-3">
+                    <div class="card journey-card">
+                        <div class="card-header">
+                            {{ journey.date|date("d/m/Y H:i") }}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ journey.name }}</h5>
+                            <ul class="list-group list-group-flush"">
+                            {% for siteList in journey.journeyHasSites %}
+                                <li class="list-group-item
+                                {{ siteList.start ? ' start' }}
+                                {{ siteList.end ? ' end' }}
+                                {{ siteList.site.id == site.id ? ' highlight' }}
+                                ">
+                                    {{ siteList.start ? '<i class="fa fa-arrow-right"></i>' }}
+                                    {{ siteList.end ? '<i class="fa fa-arrow-left"></i>' }}
+                                    {{ not siteList.start and not siteList.end ? '<i class="fa fa-arrows-h"></i>' }}
+                                    {{ siteList.site.name }}
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
-    {% endfor %}
+{#                <h2>{{ journey.name }}</h2>#}
+{#                <h2>{{ journey.date|date("d/m/Y H:i") }}</h2>#}
+{#                <ul class="fa-ul">#}
+{#                    {% for siteList in journey.journeyHasSites %}#}
+{#                        <li class="#}
+{#                    {{ siteList.start ? ' start' }}#}
+{#                    {{ siteList.end ? ' end' }}#}
+{#                    {{ siteList.site.id == site.id ? ' highlight' }}#}
+{#                ">#}
+{#                            {{ siteList.start ? '<i class="fa-li fa fa-arrow-right"></i>' }}#}
+{#                            {{ siteList.end ? '<i class="fa-li fa fa-arrow-left"></i>' }}#}
+{#                            {{ not siteList.start and not siteList.end ? '<i class="fa-li fa fa-arrows-h"></i>' }}#}
+{#                            {{ siteList.site.name }}#}
+{#                        </li>#}
+{#                    {% endfor %}#}
+{#                </ul>#}
+{#            {% endfor %}#}
+        </div>
+    </div>
+
 {% endblock %}

@@ -1,8 +1,16 @@
-body {
-    background-color: lightgray;
+#map {
+
+
+    height: 100vh;
 }
 
-
+.map-container{
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    right: 0;
+    left: 0;
+}
 
 .journey-listing li{
 
@@ -15,3 +23,6 @@ body {
     }
 }
 
+.journey-card li i.fa:before{
+    margin-left: -1.5rem;
+}

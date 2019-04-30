@@ -4,38 +4,47 @@
 
 {% block stylesheets %}
     <style>
-        #map {
-            height: 80vh;
-        }
+
     </style>
 {% endblock %}
 
 {% block body %}
 
     <div class="container-fluid">
-        {# TODO: Reorganise the layout #}
-        {# TODO: Fix map on right and form on left #}
         {# TODO: Add the unit listing under the form #}
-        <H1>Test Carto</H1>
 
-        {{ form_start(form, { 'attr': {'class': 'js-journey-form' }}) }}
-        <ul id="js-journey-listing" class="journey-listing"
-            data-prototype="{{ form_widget(form.JourneyHasSites.vars.prototype)|e }}"
-            data-widget-tags="{{ '<li></li>'|e }}"
-            data-widget-counter="{{ form.children|length }}">
-            {% for JourneyHasSite in form.JourneyHasSites %}
-                <li>
-                    {{ form_errors(JourneyHasSite) }}
-                    {{ form_widget(JourneyHasSite) }}
-                </li>
-            {% endfor %}
+        <div class="row">
 
-        </ul>
-        {{ form_widget(form) }}
-        {{ form_end(form) }}
+            <div class="col-md-4">
+                <H1>Ki Va Ou ?</H1>
+                {{ form_start(form, { 'attr': {'class': 'js-journey-form' }}) }}
+                {{ form_row(form.Name) }}
+                {{ form_row(form.Date) }}
+                <ul id="js-journey-listing" class="journey-listing"
+                    data-prototype="{{ form_widget(form.JourneyHasSites.vars.prototype)|e }}"
+                    data-widget-tags="{{ '<li></li>'|e }}"
+                    data-widget-counter="{{ form.children|length }}">
+                    {% for JourneyHasSite in form.JourneyHasSites %}
+                        <li>
+                            {{ form_errors(JourneyHasSite) }}
+                            {{ form_widget(JourneyHasSite) }}
+                        </li>
+                    {% endfor %}
+
+                </ul>
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
+            </div>
+            <div class="col-md-8 map-container">
+                <div id="map"></div>
+            </div>
+        </div>
 
 
-        <div id="map"></div>
+
+
+
+
 
     </div>
 

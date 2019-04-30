@@ -30,7 +30,7 @@ class JourneyListingController extends AbstractController
      */
     public function index(Site $site)
     {
-        $journeys = $this->journeyRepository->findJourneysBySite($site, new \DateTime('01/04/2019'));
+        $journeys = $this->journeyRepository->findJourneysBySite($site, new \DateTime('01/04/2018'));
 
         $journeys = array_unique($journeys, SORT_REGULAR);
 
