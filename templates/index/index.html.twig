@@ -15,7 +15,7 @@
 
         <div class="row">
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <H1 class="text-center">Ki Va Ou ?</H1>
                 <div class="text-center journey-form-block">
                     {{ form_start(form, { 'attr': {'class': 'js-journey-form' }}) }}
@@ -37,22 +37,31 @@
                     {{ form_end(form) }}
                 </div>
 
-                <div class="js-list-sites">
-                    {% for site in sites %}
-                        <div class="row">
-                            <div class="col-6">
-                                <p>{{ site.name }}</p>
-                            </div>
-                            <div class="col-6 js-list-site" id="js-list-site-{{ site.id }}" data-site-id="{{ site.id }}">
-                                {#Add a button that will open the popup#}
-                                <button>???</button>
-                            </div>
-                        </div>
-                    {% endfor %}
+                <div class="js-list-sites" id="js-list-sites">
+                    <h5>Search for sites</h5>
+                    {# TODO: need a search form #}
+                    <ul>
+                        {% for site in sites %}
+                            <li class="my-1">
+                                <div class="row">
+                                    <div class="col-10">{# TODO: Need to align v-middle #}
+                                        {{ site.name }}
+                                    </div>
+                                    <div class="col-1">
+                                        {#Add a button that will open the popup#}
+                                        <button class="js-site-search-button btn btn-secondary"
+                                                id="js-site-search-button-{{ site.id }}">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
 
             </div>
-            <div class="col-md-8 map-container">
+            <div class="col-md-9 map-container">
                 <div id="map"></div>
             </div>
         </div>
@@ -87,12 +96,18 @@
             //setting the popup
             markers[location.id].bindPopup();
             //calling the funciton to update the popup
-            markers[location.id].addEventListener('click', e => markerClick(e, markers[location.id], location))
+            markers[location.id].addEventListener('click', e => markerClick(e, markers[location.id], location));
+
             //search for the find button in list and add the marker click listener to it
+            document.querySelector('#js-site-search-button-' + location.id).addEventListener('click', e => markerClick(e, markers[location.id], location));
+
         }
 
         //The marker popup on click
         function markerClick(e, marker, info) {
+            //open the popup. Needed for the site-search-button
+            marker.openPopup();
+
             let p = marker.getPopup();
             let popupContent = '<p class="popup-header">' + info.name + '</p>';
 
@@ -175,36 +190,43 @@
             const end = journeyListing.lastElementChild;
             let startId = start.querySelector('.js-site-id-placeholder').value;
             let endId = end.querySelector('.js-site-id-placeholder').value;
-            let info=[];
+            let info = [];
             info.id = startId;
             info.name = start.querySelector('.js-site-name-placeholder').value;
 
-            if(startId !== endId){
-                //we do not end at our start location
-                let roundJourney = confirm('Le depart et arrivé sont differents, Vous rentrez à '+info.name+' apres votre deplacement ?');
-                if(roundJourney){
-                    console.log('here', start);
+            //we do not end at our start location
+            if (startId !== endId) {
+                //TODO: This isn't great, prehaps a modal form with extra data for all validation (name / date) ?
+                let roundJourney = confirm('Le depart et arrivé sont differents, Vous rentrez à ' + info.name + ' apres votre deplacement ?');
+                if (roundJourney) {
                     addToJourney(e, info);
                 }
             }
 
             //removing the onclick functionality of the markers
             for (const marker of markers) {
-                if(marker){
+                if (marker) {
                     marker.off('click');
                 }
 
             }
             //deleting the 'delete row' buttons
-            jQuery('.delete-form-row').each(function(){
+            jQuery('.delete-form-row').each(function () {
                 jQuery(this).remove();
             });
+
+            //removing the site search
+            jQuery('#js-list-sites').remove();
 
             //Making the submit button visible
             document.querySelector('.js-submit-button').classList.remove('d-none');
 
             //authorising the submit
             blockSubmit = false;
+
+            // TODO: If the rest of the form is filled, submit.
+            // Could have a prob with date, need to think
+            // prehaps a popup with date picker ?
         }
 
         // Creating the delete button, set the askConfirm to true for a delete confirmation
