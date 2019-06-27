@@ -65,4 +65,21 @@ class JourneyListingController extends AbstractController
             'journeys' => $journeys,
         ]);
     }
+
+    /**
+     * @Route("/journey/archive", name="journey_listing_archive")
+     */
+    public function archiveJourney(){
+        $journeys = $this->journeyRepository->findAllJourneys('01-01-1900');
+
+        $journeys = array_unique($journeys, SORT_REGULAR);
+
+        return $this->render('journey_listing/index.html.twig', [
+            'site' => [
+                'name' => 'Tous les sites',
+                'id' => 0,
+            ],
+            'journeys' => $journeys,
+        ]);
+    }
 }
