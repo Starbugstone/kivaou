@@ -19,10 +19,19 @@ class JourneyListingController extends AbstractController
      */
     private $journeyRepository;
 
+    /**
+     * @var \DateTime
+     */
+    private $yesterday;
+
     public function __construct(JourneyHasSiteRepository $journeyHasSiteRepository, JourneyRepository $journeyRepository)
     {
         $this->journeyHasSiteRepository = $journeyHasSiteRepository;
         $this->journeyRepository = $journeyRepository;
+
+        $date = new \DateTime();
+
+        $this->yesterday = $date->sub(new \DateInterval('P1D'));
     }
 
     /**
@@ -30,7 +39,7 @@ class JourneyListingController extends AbstractController
      */
     public function index(Site $site)
     {
-        $journeys = $this->journeyRepository->findJourneysBySite($site, new \DateTime('01/04/2018'));
+        $journeys = $this->journeyRepository->findJourneysBySite($site, $this->yesterday);
 
         $journeys = array_unique($journeys, SORT_REGULAR);
 
@@ -44,7 +53,7 @@ class JourneyListingController extends AbstractController
      * @Route("/journey/site", name="journey_listing_all")
      */
     public function allSites(){
-        $journeys = $this->journeyRepository->findAllJourneys(new \DateTime('01/04/2018'));
+        $journeys = $this->journeyRepository->findAllJourneys($this->yesterday);
 
         $journeys = array_unique($journeys, SORT_REGULAR);
 
