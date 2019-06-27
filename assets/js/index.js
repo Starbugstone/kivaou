@@ -38,10 +38,10 @@ function markerClick(e, marker, info) {
 
     if (journeyListing.children.length > 0) { //if we've started typing a journey
         popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey js-end-journey">Arrivé</button></p>';
-        popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey">Etape</button></p>';
+        popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey popup-default">Etape</button></p>';
         popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-danger w-100 js-delete-journey">Effacer trajet</button></p>';
     } else {
-        popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey">Depart de mon trajet</button></p>';
+        popupContent += '<p class="m-0 mt-1 w-100 "><button class="btn btn-primary w-100 js-add-to-journey popup-default">Depart de mon trajet</button></p>';
         //TODO: remove hard coded link
         popupContent += '<p class="m-0 mt-1 w-100"><a class="btn btn-primary w-100" href="/journey/site/' + info.id + '" style="color: #fff;">Liste des trajets</a></p>';
     }
@@ -192,7 +192,23 @@ jQuery('#site-search').keyup(function (e) {
     //enter key is 13
     if (upCode === 13) {
         //enter key was pressed
-        jQuery('#site-list').children(":first").find("button").click();
+        let firstButton = jQuery('#site-list').children(":first").find("button");
+        let firstButtonId = firstButton.data('markerid');
+
+        //Make sure we have at least a button
+        if(!firstButtonId){
+            return;
+        }
+
+        //If popup is open and we rehit enter, then activate default button
+        if(markers[firstButtonId].isPopupOpen()){
+            // console.log(markers[firstButtonId].getPopup());
+            let myPopup = markers[firstButtonId].getPopup()._container;
+            jQuery(myPopup).find("button.popup-default").click();
+        }else{
+            firstButton.click();
+        }
+
         return;
     }
 
