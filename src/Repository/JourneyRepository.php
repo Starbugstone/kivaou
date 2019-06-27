@@ -62,4 +62,15 @@ class JourneyRepository extends ServiceEntityRepository
             ;
         //TODO: Pagination ?
     }
+
+    public function findAllJourneys($startDate){
+        return $this->createQueryBuilder('j')
+            ->leftJoin('j.journeyHasSites', 's')
+            ->andWhere('j.Date >= :now')
+            ->setParameter('now', $startDate)
+            ->orderBy('j.Date', 'Desc')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

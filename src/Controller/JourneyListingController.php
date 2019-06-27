@@ -35,8 +35,24 @@ class JourneyListingController extends AbstractController
         $journeys = array_unique($journeys, SORT_REGULAR);
 
         return $this->render('journey_listing/index.html.twig', [
-            'controller_name' => 'JourneyListingController',
             'site' => $site,
+            'journeys' => $journeys,
+        ]);
+    }
+
+    /**
+     * @Route("/journey/site", name="journey_listing_all")
+     */
+    public function allSites(){
+        $journeys = $this->journeyRepository->findAllJourneys(new \DateTime('01/04/2018'));
+
+        $journeys = array_unique($journeys, SORT_REGULAR);
+
+        return $this->render('journey_listing/index.html.twig', [
+            'site' => [
+                'name' => 'Tous les sites',
+                'id' => 0,
+            ],
             'journeys' => $journeys,
         ]);
     }
