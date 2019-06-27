@@ -38,10 +38,20 @@
                     {{ form_end(form) }}
                 </div>
 
+                <hr>
                 <div class="js-list-sites" id="js-list-sites">
-                    <h5>Recherche des sites</h5>
                     <div id="listjs-site-list">
-                        <input class="search w-100" id="site-search"/>
+
+                        {# <input type="text" class="search form-control" id="site-search" placeholder="Rechercher centre"/> #}
+
+                        <div class="row justify-content-center">
+                            <div class="col-12 form-group has-feedback">
+                                <label class="control-label">Recherche des sites</label>
+                                <input type="text" class="search form-control" id="site-search" placeholder="Rechercher centre"/>
+                                <i class="glyphicon glyphicon-search form-control-feedback"></i>
+                            </div>
+                        </div>
+
                         <ul class="list" id="site-list">
                             {% for site in sites %}
                                 <li class="my-1">
@@ -115,7 +125,7 @@
             let p = marker.getPopup();
             let popupContent = '<p class="popup-header">' + info.name + '</p>';
 
-            if (journeyListing.children.length > 0) { //if we haven't started typing a journey
+            if (journeyListing.children.length > 0) { //if we've started typing a journey
                 popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey js-end-journey">Arrivé</button></p>';
                 popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-primary w-100 js-add-to-journey">Etape</button></p>';
                 popupContent += '<p class="m-0 mt-1 w-100"><button class="btn btn-danger w-100 js-delete-journey">Effacer trajet</button></p>';
@@ -261,19 +271,24 @@
             }
         })
 
+
         //Automaticly open first site on enter press for the search list
         jQuery('#site-search').keyup(function (e) {
-            var code = e.which;
+            let upCode = e.which;
+            // console.log(upCode);
+
             //enter key is 13
-            if (code === 13) {
+            if (upCode === 13) {
                 //enter key was pressed
                 jQuery('#site-list').children(":first").find("button").click();
-
+                return;
             }
 
             //escape key is 27, delete the input text
-            if (code === 27) {
+            if (upCode === 27) {
                 jQuery('#site-search').val("");
+                map.closePopup();
+                return;
             }
         });
 
