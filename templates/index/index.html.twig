@@ -16,7 +16,8 @@
 
             <div class="col-md-3">
                 <H1 class="text-center">Ki Va Ou ?</H1>
-                <p class="w-100"><a href="{{ path("journey_listing_all") }}" class="btn btn-info w-100">Lister les trajets</a></p>
+                <p class="w-100"><a href="{{ path("journey_listing_all") }}" class="btn btn-info w-100">Lister les
+                        trajets</a></p>
                 <div class="text-center journey-form-block">
                     {{ form_start(form, { 'attr': {'class': 'js-journey-form' }}) }}
                     {{ form_row(form.Name) }}
@@ -40,8 +41,8 @@
                 <div class="js-list-sites" id="js-list-sites">
                     <h5>Recherche des sites</h5>
                     <div id="listjs-site-list">
-                        <input class="search w-100"/>
-                        <ul class="list">
+                        <input class="search w-100" id="site-search"/>
+                        <ul class="list" id="site-list">
                             {% for site in sites %}
                                 <li class="my-1">
                                     <div class="row">
@@ -259,6 +260,22 @@
                 return false;
             }
         })
+
+        //Automaticly open first site on enter press for the search list
+        jQuery('#site-search').keyup(function (e) {
+            var code = e.which;
+            //enter key is 13
+            if (code === 13) {
+                //enter key was pressed
+                jQuery('#site-list').children(":first").find("button").click();
+
+            }
+
+            //escape key is 27, delete the input text
+            if (code === 27) {
+                jQuery('#site-search').val("");
+            }
+        });
 
         //listJs search form
         let options = {
