@@ -14,9 +14,9 @@
 
         <div class="row">
 
-            <div class="col-lg-3 col-md-5">
+            <div class="col-xl-3 col-lg-4 col-md-5">
                 <H1 class="text-center">Ki Va Ou ?</H1>
-                <div class="row justify-content-lg-center">
+                <div class="row align-items-center">
                     <div class="col-lg-6"><a href="{{ path("journey_listing_all") }}" class="btn btn-info w-100">Lister les trajets</a></div>
                     <div class="col-lg-6"><a href="{{ path("index") }}" class="btn btn-warning w-100">Reinitialiser le formulaire</a></div>
                 </div>
@@ -46,7 +46,7 @@
 
                         {# <input type="text" class="search form-control" id="site-search" placeholder="Rechercher centre"/> #}
 
-                        <div class="row justify-content-center">
+                        <div class="row">
                             <div class="col-12 form-group has-feedback">
                                 <label class="control-label">Recherche des sites</label>
                                 <input type="text" class="search form-control" id="site-search" placeholder="Rechercher centre" autofocus/>
@@ -57,8 +57,8 @@
                         <ul class="list" id="site-list">
                             {% for site in sites %}
                                 <li class="my-1">
-                                    <div class="row">
-                                        <div class="col-10 site-name">{# TODO: Need to align v-middle #}
+                                    <div class="row align-items-center">
+                                        <div class="col-10 site-name">
                                             {{ site.name }}
                                         </div>
                                         <div class="col-1">
@@ -77,7 +77,7 @@
                 </div>
 
             </div>
-            <div class="col-lg-9 col-md-7 map-container">
+            <div class="col-xl-9 col-lg-8 col-md-7 map-container">
                 <div id="map"></div>
             </div>
         </div>

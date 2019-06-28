@@ -33,16 +33,6 @@ class Site
      */
     private $lon;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\JourneyHasSite", mappedBy="Site")
-     */
-//    private $journeyHasSites;
-//
-//    public function __construct()
-//    {
-//        $this->journeyHasSites = new ArrayCollection();
-//    }
-
     public function getId(): ?int
     {
         return $this->id;

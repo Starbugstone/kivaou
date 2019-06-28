@@ -47,4 +47,9 @@ class SiteRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findAll()
+    {
+        return $this->findBy(array(), array('name' => 'ASC'));
+    }
 }
