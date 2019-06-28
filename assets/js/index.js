@@ -206,7 +206,8 @@ jQuery('#site-search').keyup(function (e) {
         if(markers[firstButtonId].isPopupOpen()){
             let myPopup = markers[firstButtonId].getPopup()._container;
             jQuery(myPopup).find("button.popup-default").click();
-
+            //we have completed our first set, delete the search field
+            jQuery('#site-search').val("");
             //we already have started
             if (journeyListing.children.length > 1){
                 endJourney(null, true);
