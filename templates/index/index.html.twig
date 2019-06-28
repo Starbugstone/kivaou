@@ -14,10 +14,12 @@
 
         <div class="row">
 
-            <div class="col-md-3">
+            <div class="col-lg-3 col-md-5">
                 <H1 class="text-center">Ki Va Ou ?</H1>
-                <p class="w-100"><a href="{{ path("journey_listing_all") }}" class="btn btn-info w-100">Lister les
-                        trajets</a></p>
+                <div class="row justify-content-lg-center">
+                    <div class="col-lg-6"><a href="{{ path("journey_listing_all") }}" class="btn btn-info w-100">Lister les trajets</a></div>
+                    <div class="col-lg-6"><a href="{{ path("index") }}" class="btn btn-warning w-100">Reinitialiser le formulaire</a></div>
+                </div>
                 <div class="text-center journey-form-block">
                     {{ form_start(form, { 'attr': {'class': 'js-journey-form' }}) }}
                     {{ form_row(form.Name) }}
@@ -75,7 +77,7 @@
                 </div>
 
             </div>
-            <div class="col-md-9 map-container">
+            <div class="col-lg-9 col-md-7 map-container">
                 <div id="map"></div>
             </div>
         </div>

@@ -111,7 +111,7 @@ function closePopup(e, marker) {
     marker.closePopup();
 }
 
-function endJourney(e) {
+function endJourney(e, auto=false) {
     const start = journeyListing.firstElementChild;
     const end = journeyListing.lastElementChild;
     let startId = start.querySelector('.js-site-id-placeholder').value;
@@ -121,12 +121,14 @@ function endJourney(e) {
     info.name = start.querySelector('.js-site-name-placeholder').value;
 
     //we do not end at our start location
-    if (startId !== endId) {
+    if (startId !== endId && auto===false) {
         //TODO: This isn't great, prehaps a modal form with extra data for all validation (name / date) ?
         let roundJourney = confirm('Le depart et arrivé sont differents, Vous rentrez à ' + info.name + ' apres votre deplacement ?');
         if (roundJourney) {
             addToJourney(e, info);
         }
+    }else if(startId !== endId && auto===true){
+        addToJourney(e, info);
     }
 
     //removing the onclick functionality of the markers
@@ -200,11 +202,16 @@ jQuery('#site-search').keyup(function (e) {
             return;
         }
 
-        //If popup is open and we rehit enter, then activate default button
+        //If popup is open and we re-hit enter, then activate default button
         if(markers[firstButtonId].isPopupOpen()){
-            // console.log(markers[firstButtonId].getPopup());
             let myPopup = markers[firstButtonId].getPopup()._container;
             jQuery(myPopup).find("button.popup-default").click();
+
+            //we already have started
+            if (journeyListing.children.length > 1){
+                endJourney(null, true);
+            }
+
         }else{
             firstButton.click();
         }
